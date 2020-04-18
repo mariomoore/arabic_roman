@@ -1,5 +1,6 @@
 katalogi
 build/*
+!build/.gitkeep
 
 ### CMake ###
 CMakeLists.txt.user
