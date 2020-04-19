@@ -12,14 +12,14 @@ int main()
 
     roman = toRoman(1984);
     std::cout << "Wynik: " << roman << "\n\n";
-    
+
     auto arabic = fromRoman(roman);
     std::cout << "Wynik: " << arabic << "\n\n";
     // Znaki nie są znakami rzymskimi
     arabic = fromRoman("XYZ");
     std::cout << "Wynik: " << arabic << "\n\n";
-    // 4 takie same znaki
-    arabic = fromRoman("VV");
+    // Znaki powtarzają się zbyt wiele razy
+    arabic = fromRoman("XXXX");
     std::cout << "Wynik: " << arabic << "\n\n";
     // Znaki w nieprawidłowej kolejności
     arabic = fromRoman("XVID");
