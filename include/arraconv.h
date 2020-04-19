@@ -3,25 +3,25 @@
 #include <algorithm>
 #include <iostream>
 
-const std::vector<std::pair<int, std::string>> arabic_roman {
+const std::vector<std::pair<short, std::string>> arabic_roman {
     {1000, "M"},
     {900, "CM"},
     {500, "D"},
     {400, "CD"},
-    {100, "C"},
-    {90, "XC"},
-    {50, "L"},
-    {40, "XL"},
-    {10, "X"},
-    {9, "IX"},
-    {5, "V"},
-    {4, "IV"},
+    {100, "C"}, 
+    {90, "XC"}, 
+    {50, "L"}, 
+    {40, "XL"}, 
+    {10, "X"}, 
+    {9, "IX"}, 
+    {5, "V"}, 
+    {4, "IV"}, 
     {1, "I"}
 };
 
 const std::vector<char> roman_signs {'I', 'V', 'X', 'L', 'C', 'D', 'M'};
 
-std::string toRoman(unsigned int arabic)
+std::string toRoman(short arabic)
 {
     std::string roman = "";
 
@@ -38,13 +38,13 @@ std::string toRoman(unsigned int arabic)
     }
     else
     {
-        std::cout << "Błąd! Nieprawidłowe dane wejściowe (" << arabic << ").\n";
+        std::cout << "Błąd! Dane wejściowe poza zakresem (" << arabic << ").\n";
     }
     
     return roman;
 }
 
-bool isRomanValid(std::string roman)
+bool isRomanSignValid(std::string roman)
 {
     return std::all_of(roman.begin(),
                         roman.end(),
@@ -53,28 +53,52 @@ bool isRomanValid(std::string roman)
                                                             [rn](auto &rs){ return rs == rn; }); });
 }
 
-int fromRoman(std::string roman)
+short fromRoman(std::string roman)
 {
-    int arabic = 0;
+    short arabic = 0;
 
-    if (isRomanValid(roman))
+    if (isRomanSignValid(roman))
     {
-        std::string::iterator roman_iter = roman.begin();
+        short arabic_roman_idx = 0;
+        short last_arabic_checked = 4000; // Sztucznie nadana wartość początkowa
 
-        for (auto& p : arabic_roman)
+        for(std::string::iterator roman_iter = roman.begin(); roman_iter != roman.end();)
         {
-            auto roman_numeral = p.second;
+            if (arabic_roman_idx >= arabic_roman.size())
+            {
+                std::cout << "Błąd! Zła kolejność znaków (" << roman << ").\n";
+                
+                return 0;
+            }
+            auto roman_numeral = arabic_roman[arabic_roman_idx].second;
+            short arabic_to_add = 0;
             while(std::equal(roman_iter, roman_iter + roman_numeral.size(), roman_numeral.begin()))
             {
-                arabic += p.first;
+                arabic_to_add += arabic_roman[arabic_roman_idx].first;
                 roman_iter = roman_iter + roman_numeral.size();
             }
+            if (arabic_to_add >= last_arabic_checked)
+            {
+                std::cout << "Błąd! Zbyt wiele znaków obok siebie (" << roman << ").\n";
+                
+                return 0;
+            }
+            arabic += arabic_to_add;
+            last_arabic_checked = arabic_roman[arabic_roman_idx].first;
+            arabic_roman_idx++;
+        }
+
+        if (toRoman(arabic) != roman)
+        {
+            std::cout << "Błąd! Walidacja liczby nieudana (" << roman << ").\n";
+            
+            return 0;
         }
     }
     else
     {
-        std::cout << "Błąd! Nieprawidłowe dane wejściowe (" << roman << ").\n";
-    }    
-    
+        std::cout << "Błąd! Nieprawidłowe znaki na wejściu (" << roman << ").\n";
+    }
+
     return arabic;
 }
